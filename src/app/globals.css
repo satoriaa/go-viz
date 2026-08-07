@@ -1,26 +1,40 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  --color-neoYellow: #FFDE59;
+  --color-neoLime: #7ED957;
+  --color-neoPink: #FF66C4;
+  --color-neoCyan: #00F0FF;
+  --color-neoPurple: #9B51E0;
+  --color-neoOrange: #FF914D;
+  --color-neoBackground: #FFFDF9;
+  --color-neoBg: #FFFDF9;
+  --color-neoDark: #121212;
+
+  --shadow-neo: 4px 4px 0px #000000;
+  --shadow-neoLg: 6px 6px 0px #000000;
+  --shadow-neoSm: 2px 2px 0px #000000;
+  --shadow-neo-dark: 4px 4px 0px #FFFFFF;
+
+  --radius-neo: 8px;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  body {
+    @apply bg-neoBackground text-neoDark font-sans antialiased selection:bg-neoYellow selection:text-black;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Custom Scrollbar bergaya neobrutalism */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #FFFDF9;
+  border-left: 2px solid #000000;
+}
+::-webkit-scrollbar-thumb {
+  background: #000000;
+  border-radius: 4px;
 }
