@@ -1,4 +1,4 @@
-# AlgoVis: Interactive Algorithm Visualizer
+# Goviz: Interactive Algorithm Visualizer
 
 AlgoVis adalah platform edukasi interaktif yang dirancang untuk memvisualisasikan cara kerja berbagai algoritma Sorting dan Searching. Proyek ini bertujuan membantu mahasiswa dan pengembang memahami kompleksitas dan alur eksekusi algoritma secara real-time.
 
