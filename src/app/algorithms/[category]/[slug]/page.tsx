@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect, useMemo, useRef } from "react";
+//sorting algorithms
 import { generateQuickSortSteps } from "@/algorithms/sorting/quick-sort/logic";
 import { quickSortMetadata } from "@/algorithms/sorting/quick-sort/metadata";
 import { generateBubbleSortSteps } from "@/algorithms/sorting/bubble-sort/logic";
@@ -12,6 +13,19 @@ import { generateHeapSortSteps } from "@/algorithms/sorting/heap-sort/logic";
 import { heapSortMetadata } from "@/algorithms/sorting/heap-sort/metadata";
 import { generateMergeSortSteps } from "@/algorithms/sorting/merge-sort/logic";
 import { mergeSortMetadata } from "@/algorithms/sorting/merge-sort/metadata";
+import { generateCountingSortSteps } from "@/algorithms/sorting/counting-sort/logic";
+import { countingSortMetadata } from "@/algorithms/sorting/counting-sort/metadata";
+import { generateBucketSortSteps } from "@/algorithms/sorting/bucket-sort/logic";
+import { bucketSortMetadata } from "@/algorithms/sorting/bucket-sort/metadata";
+import { generateIntroSortSteps } from "@/algorithms/sorting/introsort/logic";
+import { introSortMetadata } from "@/algorithms/sorting/introsort/metadata";
+import { generateRadixSortSteps } from "@/algorithms/sorting/radix-sort/logic";
+import { radixSortMetadata } from "@/algorithms/sorting/radix-sort/metadata";
+import { generateTimSortSteps } from "@/algorithms/sorting/timsort/logic";
+import { timSortMetadata } from "@/algorithms/sorting/timsort/metadata";
+import { generateShellSortSteps } from "@/algorithms/sorting/shell-sort/logic";
+import { shellSortMetadata } from "@/algorithms/sorting/shell-sort/metadata";
+//search algorithms
 import { generateBinarySearchSteps } from "@/algorithms/searching/binary-search/logic";
 import { binarySearchMetadata } from "@/algorithms/searching/binary-search/metadata";
 import { generateInterpolationSearchSteps } from "@/algorithms/searching/interpolation-search/logic";
@@ -20,6 +34,10 @@ import { generateJumpSearchSteps } from "@/algorithms/searching/jump-search/logi
 import { jumpSearchMetadata } from "@/algorithms/searching/jump-search/metadata";
 import { generateLinearSearchSteps } from "@/algorithms/searching/linear-search/logic";
 import { linearSearchMetadata } from "@/algorithms/searching/linear-search/metadata";
+import { generateExponentialSearchSteps } from "@/algorithms/searching/exponential-search/logic";
+import { exponentialSearchMetadata } from "@/algorithms/searching/exponential-search/metadata";
+import { generateFibonacciSearchSteps } from "@/algorithms/searching/fibonacci-search/logic";
+import { fibonacciSearchMetadata } from "@/algorithms/searching/fibonacci-search/metadata";
 
 import { ArrayVisualizer } from "@/components/common/ArrayVisualizer";
 import { useVisualizerStore } from "@/store/useVisualizerStore";
@@ -59,16 +77,26 @@ interface AlgorithmConfig {
 }
 
 const algorithmRegistry: Record<string, AlgorithmConfig> = {
+  //sorting algorithms
   "quick-sort": { metadata: quickSortMetadata, generator: generateQuickSortSteps as any },
   "bubble-sort": { metadata: bubbleSortMetadata, generator: generateBubbleSortSteps as any },
   "selection-sort": { metadata: selectionSortMetadata, generator: generateSelectionSortSteps as any },
   "insertion-sort": { metadata: insertionSortMetadata, generator: generateInsertionSortSteps as any },
   "heap-sort": { metadata: heapSortMetadata, generator: generateHeapSortSteps as any },
   "merge-sort": { metadata: mergeSortMetadata, generator: generateMergeSortSteps as any },
+  "counting-sort": { metadata: countingSortMetadata, generator: generateCountingSortSteps as any },
+  "bucket-sort": { metadata: bucketSortMetadata, generator: generateBucketSortSteps as any },
+  "intro-sort": { metadata: introSortMetadata, generator: generateIntroSortSteps as any },
+  "radix-sort": { metadata: radixSortMetadata, generator: generateRadixSortSteps as any },
+  "tim-sort": { metadata: timSortMetadata, generator: generateTimSortSteps as any },
+  "shell-sort": { metadata: shellSortMetadata, generator: generateShellSortSteps as any },
+  //search algorithms
   "binary-search": { metadata: binarySearchMetadata, generator: generateBinarySearchSteps as any },
   "linear-search": { metadata: linearSearchMetadata, generator: generateLinearSearchSteps as any },
   "interpolation-search": { metadata: interpolationSearchMetadata, generator: generateInterpolationSearchSteps as any },
   "jump-search": { metadata: jumpSearchMetadata, generator: generateJumpSearchSteps as any },
+  "exponential-search": { metadata: exponentialSearchMetadata, generator: generateExponentialSearchSteps as any },
+  "fibonacci-search": { metadata: fibonacciSearchMetadata, generator: generateFibonacciSearchSteps as any },
 };
 
 const sortingOptions = [
@@ -78,6 +106,12 @@ const sortingOptions = [
   { slug: "insertion-sort", label: "Insertion Sort" },
   { slug: "heap-sort", label: "Heap Sort" },
   { slug: "merge-sort", label: "Merge Sort" },
+  { slug: "counting-sort", label: "Counting Sort" },
+  { slug: "bucket-sort", label: "Bucket Sort" },
+  { slug: "intro-sort", label: "Intro Sort" },
+  { slug: "radix-sort", label: "Radix Sort" },
+  { slug: "tim-sort", label: "Tim Sort" },
+  { slug: "shell-sort", label: "Shell Sort" },
 ];
 
 const searchingOptions = [
@@ -85,6 +119,8 @@ const searchingOptions = [
   { slug: "linear-search", label: "Linear Search" },
   { slug: "interpolation-search", label: "Interpolation Search" },
   { slug: "jump-search", label: "Jump Search" },
+  { slug: "exponential-search", label: "Exponential Search" },
+  { slug: "fibonacci-search", label: "Fibonacci Search" },
 ];
 
 export default function AlgorithmDetailPage({ params }: PageProps) {
