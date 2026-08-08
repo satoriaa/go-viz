@@ -2,7 +2,8 @@
 import React from "react";
 
 interface StepType {
-  data: number[];
+  data?: number[];
+  pattern?: string;
   explanation: string;
 }
 
@@ -40,7 +41,11 @@ export function ExecutionLog({ steps, currentStepIndex, onSelectStep }: Executio
               <div className="flex justify-between items-center mb-1">
                 <span className="font-black">Step {idx + 1}</span>
                 <span className="font-mono text-[10px]">
-                  [{st.data.join(", ")}]
+                  {Array.isArray(st.data) && st.data.length > 0 
+                    ? `[${st.data.join(", ")}]` 
+                    : st.pattern 
+                    ? `Pattern: ${st.pattern}` 
+                    : ""}
                 </span>
               </div>
               <p className="line-clamp-2">{st.explanation}</p>

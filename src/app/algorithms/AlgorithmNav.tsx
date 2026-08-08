@@ -7,11 +7,26 @@ interface AlgorithmNavProps {
   currentSlug: string;
   sortingOptions: { slug: string; label: string }[];
   searchingOptions: { slug: string; label: string }[];
+  graphOptions?: { slug: string; label: string }[];
+  stringSearchOptions?: { slug: string; label: string }[];
 }
 
-export function AlgorithmNav({ category, currentSlug, sortingOptions, searchingOptions }: AlgorithmNavProps) {
-  const isSorting = category === "sorting";
-  const options = isSorting ? sortingOptions : searchingOptions;
+export function AlgorithmNav({ 
+  category, 
+  currentSlug, 
+  sortingOptions, 
+  searchingOptions, 
+  graphOptions = [], 
+  stringSearchOptions = [] 
+}: AlgorithmNavProps) {
+  let options = sortingOptions;
+  if (category === "searching") {
+    options = searchingOptions;
+  } else if (category === "graph") {
+    options = graphOptions;
+  } else if (category === "string-search") {
+    options = stringSearchOptions;
+  }
 
   return (
     <div className="flex flex-wrap items-center gap-2 bg-white border-3 border-black p-3 rounded-neo shadow-neo">

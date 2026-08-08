@@ -2,14 +2,14 @@
 import React from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
-import { ArrowRight, Sparkles, Layers, Cpu, Award } from "lucide-react";
+import { ArrowRight, Sparkles, Layers, Cpu, FileText } from "lucide-react";
 
 export default function LandingPage() {
   const categories = [
-    { title: "Sorting", count: "8 Algorithms", icon: Layers, color: "bg-neoYellow", link: "/algorithms/sorting/quick-sort" },
-    { title: "Searching", count: "1 Algorithm", icon: Cpu, color: "bg-neoLime", link: "/algorithms/searching/binary-search" },
-    { title: "Graph", count: "6 Algorithms", icon: Sparkles, color: "bg-neoPink", link: "/algorithms/graph/dijkstra" },
-    { title: "Dynamic Programming", count: "5 Algorithms", icon: Award, color: "bg-neoCyan", link: "/algorithms/dp/fibonacci" },
+    { title: "Sorting", count: "12 Algorithms", icon: Layers, color: "bg-neoYellow", link: "/algorithms/sorting/quick-sort" },
+    { title: "Searching", count: "6 Algorithms", icon: Cpu, color: "bg-neoLime", link: "/algorithms/searching/binary-search" },
+    { title: "Graph", count: "5 Algorithms", icon: Sparkles, color: "bg-neoPink", link: "/algorithms/graph/bfs" },
+    { title: "String Search", count: "4 Algorithms", icon: FileText, color: "bg-neoCyan", link: "/algorithms/string-search/kmp" },
   ];
 
   return (
@@ -40,7 +40,7 @@ export default function LandingPage() {
           <h3 className="text-xl font-black border-b-2 border-black pb-2">Platform Stats</h3>
           <div className="grid grid-cols-2 gap-4">
             <div className="bg-neoYellow/30 border-2 border-black p-4 rounded-neo text-center">
-              <span className="block text-3xl font-black">20+</span>
+              <span className="block text-3xl font-black">27+</span>
               <span className="text-xs font-bold uppercase">Algorithms</span>
             </div>
             <div className="bg-neoLime/30 border-2 border-black p-4 rounded-neo text-center">

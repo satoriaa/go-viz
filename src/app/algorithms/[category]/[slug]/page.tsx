@@ -38,8 +38,30 @@ import { generateExponentialSearchSteps } from "@/algorithms/searching/exponenti
 import { exponentialSearchMetadata } from "@/algorithms/searching/exponential-search/metadata";
 import { generateFibonacciSearchSteps } from "@/algorithms/searching/fibonacci-search/logic";
 import { fibonacciSearchMetadata } from "@/algorithms/searching/fibonacci-search/metadata";
+//graph algorithms
+import { generateBFSSteps } from "@/algorithms/graph/bfs/logic";
+import { bfsMetadata } from "@/algorithms/graph/bfs/metadata";
+import { generateDFSSteps } from "@/algorithms/graph/dfs/logic";
+import { dfsMetadata } from "@/algorithms/graph/dfs/metadata";
+import { generateBidirectionalSteps } from "@/algorithms/graph/bidirectional-search/logic";
+import { bidirectionalMetadata } from "@/algorithms/graph/bidirectional-search/metadata";
+import { generateUCSSteps } from "@/algorithms/graph/ucs/logic";
+import { ucsMetadata } from "@/algorithms/graph/ucs/metadata";
+import { generateAStarSteps } from "@/algorithms/graph/astar/logic";
+import { aStarMetadata } from "@/algorithms/graph/astar/metadata";
+//string-search algorithms
+import { generateKMPSteps } from "@/algorithms/string-search/kmp/logic";
+import { kmpMetadata } from "@/algorithms/string-search/kmp/metadata";
+import { generateRabinKarpSteps } from "@/algorithms/string-search/rabin-karp/logic";
+import { rabinKarpMetadata } from "@/algorithms/string-search/rabin-karp/metadata";
+import { generateBoyerMooreSteps } from "@/algorithms/string-search/boyer-moore/logic";
+import { boyerMooreMetadata } from "@/algorithms/string-search/boyer-moore/metadata";
+import { generateTrieSteps } from "@/algorithms/string-search/trie/logic";
+import { trieMetadata } from "@/algorithms/string-search/trie/metadata";
 
 import { ArrayVisualizer } from "@/components/common/ArrayVisualizer";
+import { GraphVisualizer } from "@/components/common/GraphVisualizer";
+import { StringVisualizer } from "@/components/common/StringVisualizer";
 import { useVisualizerStore } from "@/store/useVisualizerStore";
 
 import { AlgorithmNav } from "@/app/algorithms/AlgorithmNav";
@@ -58,10 +80,21 @@ interface PageProps {
 
 interface StepType {
   data: number[];
+  nodes?: string[];
+  edges?: [string, string][];
+  visited?: string[];
+  queueOrStack?: string[];
+  current?: string | null;
   pointers: Record<string, number | null>;
   highlights: number[];
   explanation: string;
   line: number;
+  // String search specific properties
+  text?: string;
+  pattern?: string;
+  textIndex?: number;
+  patternIndex?: number;
+  matchedIndices?: number[];
 }
 
 interface AlgorithmConfig {
@@ -73,7 +106,7 @@ interface AlgorithmConfig {
     stability: boolean;
     inPlace: boolean;
   };
-  generator: (arr: number[], target?: any) => Generator<StepType>;
+  generator: (...args: any[]) => Generator<any>;
 }
 
 const algorithmRegistry: Record<string, AlgorithmConfig> = {
@@ -97,6 +130,17 @@ const algorithmRegistry: Record<string, AlgorithmConfig> = {
   "jump-search": { metadata: jumpSearchMetadata, generator: generateJumpSearchSteps as any },
   "exponential-search": { metadata: exponentialSearchMetadata, generator: generateExponentialSearchSteps as any },
   "fibonacci-search": { metadata: fibonacciSearchMetadata, generator: generateFibonacciSearchSteps as any },
+  //graph algorithms
+  "bfs": { metadata: bfsMetadata, generator: generateBFSSteps as any },
+  "dfs": { metadata: dfsMetadata, generator: generateDFSSteps as any },
+  "bidirectional-search": { metadata: bidirectionalMetadata, generator: generateBidirectionalSteps as any },
+  "ucs": { metadata: ucsMetadata, generator: generateUCSSteps as any },
+  "a-star": { metadata: aStarMetadata, generator: generateAStarSteps as any },
+  //string-search algorithms
+  "kmp": { metadata: kmpMetadata, generator: generateKMPSteps as any },
+  "rabin-karp": { metadata: rabinKarpMetadata, generator: generateRabinKarpSteps as any },
+  "boyer-moore": { metadata: boyerMooreMetadata, generator: generateBoyerMooreSteps as any },
+  "trie": { metadata: trieMetadata, generator: generateTrieSteps as any },
 };
 
 const sortingOptions = [
@@ -123,6 +167,30 @@ const searchingOptions = [
   { slug: "fibonacci-search", label: "Fibonacci Search" },
 ];
 
+const graphOptions = [
+  { slug: "bfs", label: "Breadth-First Search (BFS)" },
+  { slug: "dfs", label: "Depth-First Search (DFS)" },
+  { slug: "bidirectional-search", label: "Bidirectional Search" },
+  { slug: "ucs", label: "Uniform Cost Search (UCS)" },
+  { slug: "a-star", label: "A* Search" },
+];
+
+const stringSearchOptions = [
+  { slug: "kmp", label: "Knuth-Morris-Pratt (KMP)" },
+  { slug: "rabin-karp", label: "Rabin-Karp" },
+  { slug: "boyer-moore", label: "Boyer-Moore" },
+  { slug: "trie", label: "Trie Search" },
+];
+
+const sampleGraph = {
+  A: ["B", "D"],
+  B: ["A", "C", "E"],
+  C: ["B", "F"],
+  D: ["A", "E"],
+  E: ["B", "D", "F"],
+  F: ["C", "E"],
+};
+
 export default function AlgorithmDetailPage({ params }: PageProps) {
   const resolvedParams = React.use(params);
 
@@ -130,19 +198,50 @@ export default function AlgorithmDetailPage({ params }: PageProps) {
     return searchingOptions.some((opt) => opt.slug === slug);
   }
 
-  const [array, setArray] = useState<number[]>([10, 22, 35, 48, 59, 72, 85, 96]);
-  const [target, setTarget] = useState<number>(59);
-
-  const currentAlgorithm = algorithmRegistry[resolvedParams.slug] || algorithmRegistry["quick-sort"];
-  const metadata = currentAlgorithm.metadata;
+  const isGraph = resolvedParams.category === "graph";
+  const isStringSearch = resolvedParams.category === "string-search";
   const isSearch = isSearchingCode(resolvedParams.slug);
 
+  const [array, setArray] = useState<number[]>([10, 22, 35, 48, 59, 72, 85, 96]);
+  const [target, setTarget] = useState<number>(59);
+  const startNode = "A";
+
+  const defaultSlug = 
+    resolvedParams.category === "graph" ? "bfs" : 
+    resolvedParams.category === "searching" ? "binary-search" : 
+    resolvedParams.category === "string-search" ? "kmp" : "quick-sort";
+
+  const currentAlgorithm = algorithmRegistry[resolvedParams.slug] || algorithmRegistry[defaultSlug];
+  const metadata = currentAlgorithm.metadata;
+
   const steps = useMemo(() => {
-    if (isSearch) {
-      return Array.from(currentAlgorithm.generator(array, target));
+    if (isGraph) {
+      const rawSteps = Array.from(currentAlgorithm.generator(sampleGraph, startNode));
+      
+      const allNodes = Object.keys(sampleGraph);
+      const allEdges = Object.entries(sampleGraph).flatMap(([u, neighbors]) =>
+        (neighbors as string[]).map((v): [string, string] => [u, v])
+      );
+
+      return rawSteps.map((s) => ({
+        ...s,
+        data: s.data || [],
+        nodes: s.nodes && s.nodes.length > 0 ? s.nodes : allNodes,
+        edges: s.edges && s.edges.length > 0 ? s.edges : allEdges,
+      })) as StepType[];
     }
-    return Array.from(currentAlgorithm.generator(array));
-  }, [array, target, resolvedParams.slug, currentAlgorithm, isSearch]);
+
+    if (isStringSearch) {
+      return Array.from(currentAlgorithm.generator()) as StepType[];
+    }
+    
+    const safeArray = Array.isArray(array) ? array : [10, 22, 35, 48, 59, 72, 85, 96];
+
+    if (isSearch) {
+      return Array.from(currentAlgorithm.generator(safeArray, target)) as StepType[];
+    }
+    return Array.from(currentAlgorithm.generator(safeArray)) as StepType[];
+  }, [array, target, resolvedParams.category, resolvedParams.slug, currentAlgorithm, isGraph, isStringSearch, isSearch]);
 
   const { isPlaying, currentStepIndex, speed, setIsPlaying, setCurrentStepIndex, setTotalSteps } = useVisualizerStore();
   const timerRef = useRef<NodeJS.Timeout | null>(null);
@@ -176,22 +275,27 @@ export default function AlgorithmDetailPage({ params }: PageProps) {
 
   const handleRandomize = () => {
     setIsPlaying(false);
-    const newArr = Array.from({ length: 8 }, () => Math.floor(Math.random() * 90) + 10);
-    const finalArr = isSearch ? newArr.sort((a, b) => a - b) : newArr;
-    setArray(finalArr);
-    if (isSearch) {
-      setTarget(finalArr[Math.floor(Math.random() * finalArr.length)]);
+    if (!isGraph && !isStringSearch) {
+      const newArr = Array.from({ length: 8 }, () => Math.floor(Math.random() * 90) + 10);
+      const finalArr = isSearch ? newArr.sort((a, b) => a - b) : newArr;
+      setArray(finalArr);
+      if (isSearch) {
+        setTarget(finalArr[Math.floor(Math.random() * finalArr.length)]);
+      }
+      setCurrentStepIndex(0);
     }
   };
 
   return (
     <div className="max-w-7xl mx-auto p-6 space-y-8">
-      {/* Navigasi Kategori (Sorting / Searching) */}
+      {/* Navigasi Kategori (Sorting / Searching / Graph / String Search) */}
       <AlgorithmNav
         category={resolvedParams.category}
         currentSlug={resolvedParams.slug}
         sortingOptions={sortingOptions}
         searchingOptions={searchingOptions}
+        graphOptions={graphOptions}
+        stringSearchOptions={stringSearchOptions}
       />
 
       {/* Header Info */}
@@ -202,25 +306,33 @@ export default function AlgorithmDetailPage({ params }: PageProps) {
         onRandomize={handleRandomize}
       />
 
-      {/* Form Input Custom Angka & Target dari User */}
-      <ArrayInputForm
-        onSubmitCustomArray={(newArr) => {
-          setIsPlaying(false);
-          setArray(newArr);
-        }}
-        isSearching={isSearch}
-        target={target}
-        onSubmitTarget={(newTgt) => {
-          setIsPlaying(false);
-          setTarget(newTgt);
-        }}
-      />
+      {/* Form Input Custom Angka & Target dari User (Hanya muncul jika bukan Graph dan bukan String Search) */}
+      {!isGraph && !isStringSearch && (
+        <ArrayInputForm
+          onSubmitCustomArray={(newArr) => {
+            setIsPlaying(false);
+            setArray(newArr);
+          }}
+          isSearching={isSearch}
+          target={target}
+          onSubmitTarget={(newTgt) => {
+            setIsPlaying(false);
+            setTarget(newTgt);
+          }}
+        />
+      )}
 
       {/* Main Layout: Visualizer di Kiri, Execution Log Panel di Kanan */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
         <div className="lg:col-span-2 space-y-6">
           <div className="space-y-4">
-            <ArrayVisualizer step={currentStep} />
+            {isGraph ? (
+              <GraphVisualizer step={currentStep as any} />
+            ) : isStringSearch ? (
+              <StringVisualizer step={currentStep as any} />
+            ) : (
+              <ArrayVisualizer step={currentStep} />
+            )}
             
             <div className="bg-neoLime border-3 border-black p-4 rounded-neo shadow-neo flex items-center gap-4">
               <span className="bg-black text-white font-black px-3 py-1 rounded text-xs uppercase shrink-0">
