@@ -38,6 +38,8 @@ import { generateExponentialSearchSteps } from "@/algorithms/searching/exponenti
 import { exponentialSearchMetadata } from "@/algorithms/searching/exponential-search/metadata";
 import { generateFibonacciSearchSteps } from "@/algorithms/searching/fibonacci-search/logic";
 import { fibonacciSearchMetadata } from "@/algorithms/searching/fibonacci-search/metadata";
+import { generateTernarySearchSteps } from "@/algorithms/searching/ternary-search/logic";
+import { ternarySearchMetadata } from "@/algorithms/searching/ternary-search/metadata";
 //graph algorithms
 import { generateBFSSteps } from "@/algorithms/graph/bfs/logic";
 import { bfsMetadata } from "@/algorithms/graph/bfs/metadata";
@@ -49,6 +51,10 @@ import { generateUCSSteps } from "@/algorithms/graph/ucs/logic";
 import { ucsMetadata } from "@/algorithms/graph/ucs/metadata";
 import { generateAStarSteps } from "@/algorithms/graph/astar/logic";
 import { aStarMetadata } from "@/algorithms/graph/astar/metadata";
+import { generateGreedyBfsSteps } from "@/algorithms/graph/greedy-bfs/logic";
+import { greedyBfsMetadata } from "@/algorithms/graph/greedy-bfs/metadata";
+import { generateIDDFSSteps } from "@/algorithms/graph/iddfs/logic";
+import { iddfsMetadata } from "@/algorithms/graph/iddfs/metadata";
 //string-search algorithms
 import { generateKMPSteps } from "@/algorithms/string-search/kmp/logic";
 import { kmpMetadata } from "@/algorithms/string-search/kmp/metadata";
@@ -58,6 +64,10 @@ import { generateBoyerMooreSteps } from "@/algorithms/string-search/boyer-moore/
 import { boyerMooreMetadata } from "@/algorithms/string-search/boyer-moore/metadata";
 import { generateTrieSteps } from "@/algorithms/string-search/trie/logic";
 import { trieMetadata } from "@/algorithms/string-search/trie/metadata";
+import { generateZSteps } from "@/algorithms/string-search/z-algorithm/logic";
+import { zMetadata } from "@/algorithms/string-search/z-algorithm/metadata";
+import { generateAhoCorasickSteps } from "@/algorithms/string-search/aho-corasick/logic";
+import { ahoCorasickMetadata } from "@/algorithms/string-search/aho-corasick/metadata";
 
 import { ArrayVisualizer } from "@/components/common/ArrayVisualizer";
 import { GraphVisualizer } from "@/components/common/GraphVisualizer";
@@ -130,17 +140,22 @@ const algorithmRegistry: Record<string, AlgorithmConfig> = {
   "jump-search": { metadata: jumpSearchMetadata, generator: generateJumpSearchSteps as any },
   "exponential-search": { metadata: exponentialSearchMetadata, generator: generateExponentialSearchSteps as any },
   "fibonacci-search": { metadata: fibonacciSearchMetadata, generator: generateFibonacciSearchSteps as any },
+  "ternary-search": { metadata: ternarySearchMetadata, generator: generateTernarySearchSteps as any },
   //graph algorithms
   "bfs": { metadata: bfsMetadata, generator: generateBFSSteps as any },
   "dfs": { metadata: dfsMetadata, generator: generateDFSSteps as any },
   "bidirectional-search": { metadata: bidirectionalMetadata, generator: generateBidirectionalSteps as any },
   "ucs": { metadata: ucsMetadata, generator: generateUCSSteps as any },
   "a-star": { metadata: aStarMetadata, generator: generateAStarSteps as any },
+  "greedy-bfs": { metadata: greedyBfsMetadata, generator: generateGreedyBfsSteps as any },
+  "iddfs": { metadata: iddfsMetadata, generator: generateIDDFSSteps as any },
   //string-search algorithms
   "kmp": { metadata: kmpMetadata, generator: generateKMPSteps as any },
   "rabin-karp": { metadata: rabinKarpMetadata, generator: generateRabinKarpSteps as any },
   "boyer-moore": { metadata: boyerMooreMetadata, generator: generateBoyerMooreSteps as any },
   "trie": { metadata: trieMetadata, generator: generateTrieSteps as any },
+  "z-algorithm": { metadata: zMetadata, generator: generateZSteps as any },
+  "aho-corasick": { metadata: ahoCorasickMetadata, generator: generateAhoCorasickSteps as any },
 };
 
 const sortingOptions = [
@@ -165,6 +180,7 @@ const searchingOptions = [
   { slug: "jump-search", label: "Jump Search" },
   { slug: "exponential-search", label: "Exponential Search" },
   { slug: "fibonacci-search", label: "Fibonacci Search" },
+  { slug: "ternary-search", label: "Ternary Search" },
 ];
 
 const graphOptions = [
@@ -173,6 +189,8 @@ const graphOptions = [
   { slug: "bidirectional-search", label: "Bidirectional Search" },
   { slug: "ucs", label: "Uniform Cost Search (UCS)" },
   { slug: "a-star", label: "A* Search" },
+  { slug: "greedy-bfs", label: "Greedy Best-First Search" },
+  { slug: "iddfs", label: "Iterative Deepening Depth-First Search (IDDFS)" },
 ];
 
 const stringSearchOptions = [
@@ -180,6 +198,8 @@ const stringSearchOptions = [
   { slug: "rabin-karp", label: "Rabin-Karp" },
   { slug: "boyer-moore", label: "Boyer-Moore" },
   { slug: "trie", label: "Trie Search" },
+  { slug: "z-algorithm", label: "Z Algorithm" },
+  { slug: "aho-corasick", label: "Aho-Corasick" },
 ];
 
 const sampleGraph = {
